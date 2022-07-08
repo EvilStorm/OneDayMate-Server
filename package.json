@@ -1,0 +1,19 @@
+{
+  "name": "com.hj.odm",
+  "version": "0.0.1",
+  "description": "Find friend serivce.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EvilStorm/OneDayMate-Server.git"
+  },
+  "author": "gevilstorm@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EvilStorm/OneDayMate-Server/issues"
+  },
+  "homepage": "https://github.com/EvilStorm/OneDayMate-Server#readme"
+}
