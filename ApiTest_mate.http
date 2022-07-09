@@ -1,0 +1,172 @@
+###
+GET http://localhost:2394/api/mate/page/0
+content-type: application/json
+# identifyId: uJyZ1KPQpsTFuTcAAOwOZDRYhfu1
+# userId: 6256d1101014841df59a4975
+
+//Test01
+# identifyId: 2YQe8iVMtUMK4S8nSf3xwdEf6Nd2
+# userId: 626e7bed84af6260aeb8d8d6
+//Test02
+# identifyId: u3bCWQjSnygYP23WDxEQHk4Fxoq1
+# userId: 626e7c0084af6260aeb8d8e7
+//Test03
+# identifyId: 6aGMeuLgbSdQlSW6TPOTf3OoEA12
+# userId: 626e7c1584af6260aeb8d8f8
+
+
+###
+POST http://localhost:2394/api/mate
+content-type: application/json
+identifyId: 2YQe8iVMtUMK4S8nSf3xwdEf6Nd2
+userId: 626e7bed84af6260aeb8d8d6
+
+{
+    "images": ["https://firebasestorage.googleapis.com/v0/b/shoppingmate-652c6.appspot.com/o/sample_female_dendy_1.jpeg?alt=media&token=b47c1748-9763-43e7-b006-70ec360fdd19", "https://firebasestorage.googleapis.com/v0/b/shoppingmate-652c6.appspot.com/o/sample_female_over_fit_1.jpeg?alt=media&token=6496575b-fd3e-4a7c-a6fc-9ec483821a60"],
+    "title": "관악산 출발합니다.",
+    "message": "관악산 짧은 코스 약 2시간 정도 걸립니.",
+    "locationStr": "화곡동",
+    "mateDate": "2022-05-24T14:00:00",
+    "tags": ["관악산", "등산", "2시간"]
+    
+}
+
+###
+GET http://localhost:2394/api/tag/search/word/꽃놀이/dress/0
+content-type: application/json
+identifyId: uJyZ1KPQpsTFuTcAAOwOZDRYhfu1
+userId: 6256d1101014841df59a4975
+
+###
+GET http://localhost:2394/api/mate/detail/625d75925fcd1ca509692024
+content-type: application/json
+identifyId: uJyZ1KPQpsTFuTcAAOwOZDRYhfu1
+userId: 6256d1101014841df59a4975
+
+# identifyId: u3bCWQjSnygYP23WDxEQHk4Fxoq1
+# userId: 626e7c0084af6260aeb8d8e7
+###
+POST http://localhost:2394/api/mate/join/62766ea1564d6cda974e4169
+content-type: application/json
+identifyId: u3bCWQjSnygYP23WDxEQHk4Fxoq1
+userId: 626e7c0084af6260aeb8d8e7
+
+
+###
+POST http://localhost:2394/api/mate/join/626b46cb8c2f69d2cf0024c2
+content-type: application/json
+identifyId: uJyZ1KPQpsTFuTcAAOwOZDRYhfu1
+userId: 6256d1101014841df59a4975
+
+###
+POST http://localhost:2394/api/mate/accept/626e7c0084af6260aeb8d8e7
+content-type: application/json
+identifyId: uJyZ1KPQpsTFuTcAAOwOZDRYhfu1
+userId: 6256d1101014841df59a4975
+
+{
+    "joinMemberId": "625ad4ac1014841df59a4a25"
+}
+
+
+###
+POST http://localhost:2394/api/mate/separate/625d75925fcd1ca509692024
+content-type: application/json
+identifyId: AuRZj4QtqBegIQJxcAXlkFXsThc2
+userId: 625c28721014841df59a4a9d
+
+
+###
+POST http://localhost:2394/api/mate/separate/625d75925fcd1ca509692024
+content-type: application/json
+identifyId: XWK5rLSr8JM18gxIBSiUWWL9WUd2
+userId: 6252cce487194a3e052fe240
+
+
+###
+GET http://localhost:2394/api/mate/created/page/0
+content-type: application/json
+identifyId: uJyZ1KPQpsTFuTcAAOwOZDRYhfu1
+userId: 6256d1101014841df59a4975
+
+
+###
+GET http://localhost:2394/api/mate/join/page/0
+content-type: application/json
+identifyId: uJyZ1KPQpsTFuTcAAOwOZDRYhfu1
+userId: 6256d1101014841df59a4975
+
+
+
+###
+GET http://localhost:2394/api/mate/join/page/0
+content-type: application/json
+identifyId: EsZsHQSNwGbfVvTvYagqs0Snxrz2
+userId: 625ad4ac1014841df59a4a25
+
+
+###
+GET http://localhost:2394/api/mate/me/created/0
+content-type: application/json
+identifyId: 6aGMeuLgbSdQlSW6TPOTf3OoEA12
+userId: 626e7c1584af6260aeb8d8f8
+
+###
+GET http://localhost:2394/api/mate/me/join/0
+content-type: application/json
+identifyId: 6aGMeuLgbSdQlSW6TPOTf3OoEA12
+userId: 626e7c1584af6260aeb8d8f8
+
+###
+GET http://localhost:2394/api/mate/me/like/0
+content-type: application/json
+identifyId: 6aGMeuLgbSdQlSW6TPOTf3OoEA12
+userId: 626e7c1584af6260aeb8d8f8
+
+
+//Test01
+# identifyId: 2YQe8iVMtUMK4S8nSf3xwdEf6Nd2
+# userId: 626e7bed84af6260aeb8d8d6
+//Test02
+# identifyId: u3bCWQjSnygYP23WDxEQHk4Fxoq1
+# userId: 626e7c0084af6260aeb8d8e7
+//Test03
+# identifyId: 6aGMeuLgbSdQlSW6TPOTf3OoEA12
+# userId: 626e7c1584af6260aeb8d8f8
+
+
+###
+POST http://localhost:2394/api/mate/join/626e8764cc7207d80b6a8175
+content-type: application/json
+identifyId: 6aGMeuLgbSdQlSW6TPOTf3OoEA12
+userId: 626e7c1584af6260aeb8d8f8
+
+
+###
+POST http://localhost:2394/api/mate
+content-type: application/json
+identifyId: 6aGMeuLgbSdQlSW6TPOTf3OoEA12
+userId: 626e7c1584af6260aeb8d8f8
+
+{
+    "images": ["https://firebasestorage.googleapis.com/v0/b/shoppingmate-652c6.appspot.com/o/sample_female_over_fit_1.jpeg?alt=media&token=6496575b-fd3e-4a7c-a6fc-9ec483821a60"],
+    "title": "홍대 한바퀴 합시다.",
+    "message": "스트릿 패션으로 쇼핑하려고 합니다. 어서오세요!! #스트리트 #홍대 #맛집도",
+    "locationStr": "압구정",
+    "mateDate": "2022-05-04T13:00:00",
+    "tags": ["스트리트", "홍대", "맛집도"]
+}
+###
+POST http://localhost:2394/api/mate
+content-type: application/json
+identifyId: u3bCWQjSnygYP23WDxEQHk4Fxoq1
+userId: 626e7c0084af6260aeb8d8e7
+
+{
+    "images": ["https://firebasestorage.googleapis.com/v0/b/shoppingmate-652c6.appspot.com/o/sample_female_semi_formal_1.jpeg?alt=media&token=354888d8-4c72-42e2-acc1-9b5b58b51344"],
+    "title": "동대문 가실분",
+    "message": "저는 러블리한 스타일을 좋아합니다. 그런 곳을 많이 알고 있으니 같이 가실분? #러블리 #하늘하늘 #핑크 #브라우스",
+    "locationStr": "압구정",
+    "mateDate": "2022-05-07T13:00:00",
+    "tags": ["러블리","하늘하늘", "핑크", "브라우스"]
+}

@@ -1,0 +1,54 @@
+###
+POST http://localhost:2394/api/tag
+content-type: application/json
+identifyid: admin
+userId: 1
+
+{
+    "category": "스포츠",
+    "tag": "테니스"
+}
+
+
+###
+GET http://localhost:2394/api/tag/all
+content-type: application/json
+identifyid: uJyZ1KPQpsTFuTcAAOwOZDRYhfu1
+userId: 6256d1101014841df59a4975
+
+
+### 전체 테그 상세 (admin)
+GET http://localhost:2394/api/tag/tagMap/detail
+content-type: application/json
+identifyid: admin
+userId: admin
+
+
+### TAG 검색 API
+GET http://localhost:2394/api/tag/search/동
+content-type: application/json
+identifyid: uJyZ1KPQpsTFuTcAAOwOZDRYhfu1
+userId: 6256d1101014841df59a4975
+
+### TAG 상세
+GET http://localhost:2394/api/tag/tagMap/detail/625e5cde9cec21e558352b8f
+content-type: application/json
+identifyid: uJyZ1KPQpsTFuTcAAOwOZDRYhfu1
+userId: 6256d1101014841df59a4975
+
+
+
+### TAG 검색 API
+GET http://localhost:2394/api/tag/search/tagId/625e5cde9cec21e558352b8f/mate/0
+content-type: application/json
+identifyid: uJyZ1KPQpsTFuTcAAOwOZDRYhfu1
+userId: 6256d1101014841df59a4975
+
+
+### TAG 검색 API
+GET http://localhost:2394/api/tag/search/word/즐기자/mate/0
+content-type: application/json
+identifyid: uJyZ1KPQpsTFuTcAAOwOZDRYhfu1
+userId: 6256d1101014841df59a4975
+
+

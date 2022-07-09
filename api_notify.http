@@ -1,0 +1,26 @@
+###
+POST http://localhost:2394/api/notify
+content-type: application/json
+identifyid: admin
+id: 1
+
+{
+    "title": "안녕하세요. 첫 인사 드립니다.",
+    "say": "<h3>오늘 하루 나의 친구를 찾자.</h3><br /><br /><div>안녕하세요. 오늘 친구찾기 하루친구 입니다. </div><br /><div>내 삶의 하루를 같이 채워줄 친구를 찾아봅시다.</div><br /><div>관계에 얽메이지 말고 오늘 하루 신나게 즐겨 봅시다. </div><br /><div>처음 보는 사람들이 이상하지 않을까 고민된다고요? </div><br /><br /><div>걱정마세요! 이전 참여자들의 평가를 보며 어떤 사람인지 미리 알고 만날수 있어요.<br />안전한 만남을 위해 계속 힘쓰겠습니다. </div><br /><br /><div>한잔 올림</div>",
+    "appStop": false,
+    "important": true
+
+}
+
+    # seq : {type: Number, index : true, unique: true},
+    # title : {type:String},
+    # say : {type:String},
+    # appStop : {type:Boolean, default: false},
+    # important: {type:Boolean, default: false},
+    # show:{type:Boolean, default: true},
+    # createdAt: {type: Date, default: Date.now}
+###
+GET http://localhost:2394/api/notify
+content-type: application/json
+identifyid: admin
+id: 1

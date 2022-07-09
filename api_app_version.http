@@ -1,0 +1,22 @@
+###
+POST http://localhost:2394/api/appVersion
+content-type: application/json
+identifyid: admin
+id: 1
+
+{
+    "appVer": 2,
+    "say": "업데이트가 있습니다.",
+    "isMustUpdate": false
+}
+
+    # appVer : {type: Number, index : true, unique: true},
+    # say: {type: String},
+    # isMustUpdate : {type:Boolean, default: false},
+    # isShow: {type:Boolean, default:true},
+    # createdAt: {type: Date, default: Date.now}
+###
+GET http://localhost:2394/api/appVersion
+content-type: application/json
+identifyid: admin
+id: 1
