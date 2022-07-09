@@ -12,6 +12,7 @@ const schema = new Schema({
     aboutMe: {type: String, default: "." },
     pushToken: {type: String, default: null},
     setting: {type: Schema.Types.ObjectId, ref: 'Setting', default:null},
+    mateHistory: {type: Schema.Types.ObjectId, ref: 'MateMyHistory'},
     createdAt: {type: Date, default: Date.now}
 }, {
     versionKey: false 

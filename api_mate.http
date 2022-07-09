@@ -4,32 +4,32 @@ content-type: application/json
 # identifyId: uJyZ1KPQpsTFuTcAAOwOZDRYhfu1
 # userId: 6256d1101014841df59a4975
 
-//Test01
-# identifyId: 2YQe8iVMtUMK4S8nSf3xwdEf6Nd2
-# userId: 626e7bed84af6260aeb8d8d6
 //Test02
-# identifyId: u3bCWQjSnygYP23WDxEQHk4Fxoq1
-# userId: 626e7c0084af6260aeb8d8e7
-//Test03
-# identifyId: 6aGMeuLgbSdQlSW6TPOTf3OoEA12
-# userId: 626e7c1584af6260aeb8d8f8
-
+# identifyId: test_member_two
+# userId: 62c9ab3c48c0fddeb533ee1e
 
 ###
 POST http://localhost:2394/api/mate
 content-type: application/json
-identifyId: 2YQe8iVMtUMK4S8nSf3xwdEf6Nd2
-userId: 626e7bed84af6260aeb8d8d6
+identifyId: test_member_two
+userId: 62c9ab3c48c0fddeb533ee1e
 
 {
     "images": ["https://firebasestorage.googleapis.com/v0/b/shoppingmate-652c6.appspot.com/o/sample_female_dendy_1.jpeg?alt=media&token=b47c1748-9763-43e7-b006-70ec360fdd19", "https://firebasestorage.googleapis.com/v0/b/shoppingmate-652c6.appspot.com/o/sample_female_over_fit_1.jpeg?alt=media&token=6496575b-fd3e-4a7c-a6fc-9ec483821a60"],
-    "title": "관악산 출발합니다.",
+    "title": "관악산 출발합니다.333",
     "message": "관악산 짧은 코스 약 2시간 정도 걸립니.",
     "locationStr": "화곡동",
-    "mateDate": "2022-05-24T14:00:00",
+    "mateDate": "2022-07-24T14:00:00",
     "tags": ["관악산", "등산", "2시간"]
     
 }
+
+###
+GET http://localhost:2394/api/mate/detail/62c9ae3ba419ad6b1dd72ecd
+content-type: application/json
+identifyId: test_member_two
+userId: 62c9ab3c48c0fddeb533ee1e
+
 
 ###
 GET http://localhost:2394/api/tag/search/word/꽃놀이/dress/0

@@ -7,6 +7,7 @@ var {ResponseCode } = require('../components/response/response_code_store');
 var {ExceptionType, createException, convertException} = require('../components/exception/exception_creator');
 
 var ModelTag = require('../models/model_tag');
+var ModelTagUseMap = require('../models/model_tag_use_map');
 var auth = require('../components/auth');
 
 const PAGE_COUNT = 30;
@@ -64,6 +65,21 @@ router.get("/search/:word", (req, res) => {
     .sort({count: -1})
     .exec()
     .then((cursor) => res.json(response.success(cursor)))
+    .catch((_) => {
+        var error = convertException(_)
+        res.json(response.fail(error, error.errmsg, error.code))
+    });
+});
+
+router.get("/tagMap/detail", auth.isAdmin, (req, res) => {
+    ModelTagUseMap.find()
+    .populate('user')
+    .populate('mate')
+    .populate('tag')
+    .sort({createdAt: -1})
+    .then(_ => {
+        res.json(response.success(_));
+    })
     .catch((_) => {
         var error = convertException(_)
         res.json(response.fail(error, error.errmsg, error.code))

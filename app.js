@@ -57,6 +57,7 @@ app.use('/api/notify', require('./routers/notify'));
 app.use('/api/term', require('./routers/term'));
 app.use('/api/tag', require('./routers/tag'));
 app.use('/api/sign', require('./routers/sign'));
+app.use('/api/user', require('./routers/user'));
 app.use('/api/setting', require('./routers/setting'));
 app.use('/api/mate', require('./routers/mate'));
 

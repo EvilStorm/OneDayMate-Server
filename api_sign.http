@@ -1,0 +1,23 @@
+###
+GET http://localhost:2394/api/sign
+content-type: application/json
+identifyId: admin
+userId: 1
+
+
+###
+POST http://localhost:2394/api/sign/signin
+content-type: application/json
+identifyId: test_member_two
+
+{
+    "identifyId": "test_member_two",
+    "email": "test_2@test.com"
+}
+
+//Test01
+# identifyId: test_member_one
+# userId: 62c9a80de7a11e73a89baba8
+//Test02
+# identifyId: test_member_two
+# userId: 62c9ab3c48c0fddeb533ee1e

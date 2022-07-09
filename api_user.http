@@ -1,0 +1,39 @@
+
+###
+GET http://localhost:2394/api/user/find/identifyId/test_member_one
+content-type: application/json
+identifyid: admin
+
+
+###
+GET http://localhost:2394/api/user/me
+content-type: application/json
+identifyId: test_member_two
+userId: 62c9ab3c48c0fddeb533ee1e
+
+###
+GET http://localhost:2394/api/user/detail/me
+content-type: application/json
+identifyId: test_member_two
+userId: 62c9ab3c48c0fddeb533ee1e
+
+###
+GET http://localhost:2394/api/user/check/nickName/haha2
+content-type: application/json
+identifyId: test_member_two
+userId: 62c9ab3c48c0fddeb533ee1e
+
+
+
+//Test01
+# identifyId: test_member_one
+# userId: 62c9a80de7a11e73a89baba8
+
+//Test02
+# identifyId: test_member_two
+# userId: 62c9ab3c48c0fddeb533ee1e
+
+//Test03
+# identifyId: 6aGMeuLgbSdQlSW6TPOTf3OoEA12
+# userId: 626e7c1584af6260aeb8d8f8
+

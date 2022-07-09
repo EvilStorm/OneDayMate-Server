@@ -8,6 +8,7 @@ var TagHandler = require('./components/tag_handler');
 var ModelUser = require('../models/model_user');
 var ModelMateMyHistory = require('../models/model_mate_my_history');
 var ModelMateMember = require('../models/model_mate_member');
+var { getMateDetail, getMateBerif, getMateByTag} = require('./components/find_mate');
 var DBConst = require('../db/constant');
 var response = require('../components/response/response_util');
 var {ResponseCode } = require('../components/response/response_code_store');
@@ -18,37 +19,7 @@ var FCMCreator = require('../components/fcm/fcm_message_creator');
 var FCMSender = require('../components/fcm/fcm_sender');
 
 
-const userBriefSelect = "_id nickName pictureMe";
-const matePopulate = [
-    {
-        path: 'member',
-        select: 'member',
-        populate: [
-            {
-                path: 'member',
-                select: userBriefSelect
-            },
-            {
-                path: 'joinMember',
-                select: userBriefSelect
-            },
-            {
-                path: 'deniedMember',
-                select: userBriefSelect
-            }
 
-        ]
-    },
-    {
-        path: 'owner',
-        select: userBriefSelect
-    },
-
-    {
-        path: 'tags'
-    },
-
-];
 
 router.post("", auth.isSignIn, (req, res) => {
     console.log(req.body);
@@ -65,25 +36,18 @@ router.post("", auth.isSignIn, (req, res) => {
         var history = await ModelMateMyHistory.findOne({owner: req.decoded.id});
         history.created.unshift(_._id);
         await history.save()
-
-        var user = await ModelUser.findById(req.decoded.id);
-        user.mate.unshift(_._id);
-        await user.save();
         
         var mateJoin = await ModelMateMember(
             {
                 owner: req.decoded.id,
                 mate: _.id,
                 appliedMember: [req.decoded.id],
-                joinMember: [req.decoded.id],
+                acceptedMember: [req.decoded.id],
                 deniedMember: [],
             }
         ).save();
-
-        var mate = await ModelMate.findById(_._id);
-        mate.member = mateJoin._id;
-        
-        await mate.save();
+        _.member = mateJoin._id;
+        await _.save();
 
         await TagHandler.postTagsMate(_._id, _.owner, tags)
         const resposeData = await getMateDetail(_._id)
@@ -96,6 +60,40 @@ router.post("", auth.isSignIn, (req, res) => {
     });
 });
 
+
+router.get("/detail/:mateId", (req, res) => {
+    getMateDetail(req.params.mateId)
+    .then((_) => res.json(response.success(_)))
+    .catch((_) => {
+        console.log(_);
+        var error = convertException(_)
+        res.json(response.fail(error, error.errmsg, error.code))
+    });
+});
+
+router.get("/brief/:mateId", (req, res) => {
+    getMateBerif(req.params.mateId)
+    .then((_) => res.json(response.success(_)))
+    .catch((_) => {
+        console.log(_);
+        var error = convertException(_)
+        res.json(response.fail(error, error.errmsg, error.code))
+    });
+});
+
+router.get("/search/tag/:tag", (req, res) => {
+    getMateByTag(req.params.tag)
+    .then((_) => res.json(response.success(_)))
+    .catch((_) => {
+        console.log(_);
+        var error = convertException(_)
+        res.json(response.fail(error, error.errmsg, error.code))
+    });
+});
+
+
+
+
 router.patch("/:_id", auth.isAdmin, (req, res) => {
     ModelMate.findByIdAndUpdate({_id: req.params._id}, {$set: req.body})
     .exec()
@@ -105,6 +103,7 @@ router.patch("/:_id", auth.isAdmin, (req, res) => {
         res.json(response.fail(error, error.errmsg, error.code))
     });
 });
+
 router.delete("/:_id", auth.isAdmin, (req, res) => {
     ModelMate.findByIdAndDelete(req.params._id)
     .exec()

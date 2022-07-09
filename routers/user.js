@@ -24,6 +24,7 @@ router.get('/me', auth.isSignIn, async function(req, res) {
     }
 });
 
+
 router.get('/detail/me', auth.isSignIn, async function(req, res) {
 
     try {
@@ -31,66 +32,6 @@ router.get('/detail/me', auth.isSignIn, async function(req, res) {
         var result = await ModelUser.findOne({
             _id: mongoose.Types.ObjectId(req.decoded.id),
         })
-        .populate([
-            {
-                path: 'mate',
-                populate: [
-                    {
-                        path: "tags",
-                    }, 
-                    {
-                        path: "owner",
-                        select: "_id nickName pictureMe"
-                    }, 
-                ]           
-            },
-            {
-                path: 'mate',
-                populate: {
-                    path: "member",
-                    populate: [
-                        {
-                            path: "member",
-                            select: "_id nickName pictureMe"
-                        },
-                        {
-                            path: "joinMember",
-                            select: "_id nickName pictureMe"
-                        },
-                        {
-                            path: "deniedMember",
-                            select: "_id nickName pictureMe"
-                        },
-                    ]
-                },
-            },
-        ])
-        .populate([{
-            path: 'mateJoin',
-            populate: {
-                path: "member",
-                select: "_id nickName pictureMe"
-            },
-        },
-        {
-            path: 'mateJoin',
-            populate: {
-                path: "owner",
-                select: "_id nickName pictureMe"
-            },
-        },
-        {
-            path: 'mateJoin',
-            populate: {
-                path: "mate",
-                select: "_id images title message memberLimit locationStr mateDate tags",
-                populate: {
-                    path : "tags"
-                }
-            },
-        },
-
-        ])
         .populate('setting')
         res.json(response.success(result));
 
@@ -121,6 +62,19 @@ router.get('/check/nickName/:nickName',  async function(req, res) {
         res.json(response.fail(error, error.errmsg, error.code))
     }
 });
+
+
+router.get("/find/identifyId/:identifyId", auth.isAdmin, (req, res) => {
+    ModelUser.findOne({identifyId: req.params.identifyId})
+    .exec()
+    .then((_) => res.json(response.success(_)))
+    .catch((_) => {
+        var error = convertException(_)
+        res.json(response.fail(error, error.errmsg, error.code))
+    });
+});
+
+
 
 router.patch("/", auth.isSignIn, (req, res) => {
     ModelUser.findByIdAndUpdate({_id: req.decoded.id}, {$set: req.body})
