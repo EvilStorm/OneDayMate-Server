@@ -14,6 +14,7 @@ var response = require('../components/response/response_util');
 var {ResponseCode } = require('../components/response/response_code_store');
 var {ExceptionType, createException, convertException} = require('../components/exception/exception_creator');
 
+var MateAggr = require('./components/aggr_mate');
 
 var FCMCreator = require('../components/fcm/fcm_message_creator');
 var FCMSender = require('../components/fcm/fcm_sender');
@@ -80,6 +81,59 @@ router.get("/brief/:mateId", (req, res) => {
         res.json(response.fail(error, error.errmsg, error.code))
     });
 });
+
+router.get("/latest/:count", auth.signCondition, (req, res) => {
+    
+    MateAggr.getMateBrief(
+        req.decoded.id,  
+        {
+            $and: [
+                {isShow: true},
+                {mateDate: {$gte: new Date()}}
+            ]
+        },
+        0,
+        parseInt(req.params.count)
+    )
+    .then(_ => {
+        res.json(response.success(_));
+    })
+    .catch((_) => {
+        console.log(_);
+        var error = convertException(_)
+        res.json(response.fail(error, error.errmsg, error.code))
+    });
+});
+
+
+router.get("/search/tag/:tag/:page", auth.signCondition, (req, res) => {
+    var searchWords = req.params.tag.split(',');
+
+    MateAggr.getMateBrief(
+        req.decoded.id,  
+        {
+            $and: [
+                {isShow: true},
+                {"tags.tag": {$in: searchWords}},
+                {mateDate: {$gte: new Date()}}
+            ]
+        },
+        req.params.page,
+        DBConst.PAGE_COUNT,
+        {
+            mateDate: 1
+        }   
+    )
+    .then(_ => {
+        res.json(response.success(_));
+    })
+    .catch((_) => {
+        console.log(_);
+        var error = convertException(_)
+        res.json(response.fail(error, error.errmsg, error.code))
+    });
+});
+
 
 router.get("/search/tag/:tag", (req, res) => {
     getMateByTag(req.params.tag)

@@ -25,7 +25,7 @@ userId: admin
 
 
 ### TAG 검색 API
-GET http://localhost:2394/api/tag/search/동
+GET http://localhost:2394/api/tag/search/등
 content-type: application/json
 identifyid: uJyZ1KPQpsTFuTcAAOwOZDRYhfu1
 userId: 6256d1101014841df59a4975
