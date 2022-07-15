@@ -16,7 +16,7 @@ id: 1
     # isShow: {type:Boolean, default:true},
     # createdAt: {type: Date, default: Date.now}
 ###
-GET http://localhost:2394/api/appVersion
+GET http://localhost:2394/api/appVersion/after/1
 content-type: application/json
 identifyid: admin
 id: 1

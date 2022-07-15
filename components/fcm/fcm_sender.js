@@ -1,10 +1,10 @@
 var admin = require("firebase-admin");
 
-var serviceAccount = require("../../onedaymate-b9037-firebase-adminsdk-4o2eq-6b8a8e1690.json");
+// var serviceAccount = require("../../onedaymate-b9037-firebase-adminsdk-4o2eq-6b8a8e1690.json");
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount)
+// });
 
 
 const sendPush = function (infos) {

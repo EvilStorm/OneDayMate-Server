@@ -15,6 +15,15 @@ app.use(morgan("short"));
 app.use(cors());
 DB.connect();
 
+var admin = require("firebase-admin");
+
+var serviceAccount = require("./onedaymate-b9037-firebase-adminsdk-4o2eq-6b8a8e1690.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+
 const swaggerDoc = YAML.load('./swagger.yaml');
 
 var os = require('os');
@@ -60,7 +69,7 @@ app.use('/api/sign', require('./routers/sign'));
 app.use('/api/user', require('./routers/user'));
 app.use('/api/setting', require('./routers/setting'));
 app.use('/api/mate', require('./routers/mate'));
-
+app.use('/api/auth', require('./routers/auth'));
 
 app.use(exceptionHandler)
 
