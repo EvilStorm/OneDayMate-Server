@@ -1,0 +1,12 @@
+###
+GET http://localhost:2394/api/briefAddr/city
+content-type: application/json
+identifyid: admin
+id: 1
+
+###
+GET http://localhost:2394/api/briefAddr/search/동작구
+content-type: application/json
+identifyid: admin
+id: 1
+
