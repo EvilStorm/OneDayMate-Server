@@ -2,12 +2,13 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 const schema = new Schema({
-    category: {type: Schema.Types.ObjectId, ref: 'TagCategory'},
-    tag: {type: String, index: true, unique: true,},
-    count: {type: Number, default: 0,},
+    category: {type: String,index: true,},
+    type: {type: Number,index: true},
+    iconUrl: {type: String,},
+    tags: [{type: Schema.Types.ObjectId, ref: 'Tag', default:null}],
     createdAt: {type: Date, default: Date.now, select: false,},
 }, {
     versionKey: false // You should be aware of the outcome after set to false
 });
 
-module.exports = mongoose.model('Tag', schema);
+module.exports = mongoose.model('TagCategory', schema);

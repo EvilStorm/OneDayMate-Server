@@ -11,7 +11,7 @@ id: 1
 }
 
 ###
-GET http://localhost:2394/api/term/after/0
+GET http://localhost:2394/api/term/last
 content-type: application/json
 identifyid: admin
 id: 1

@@ -77,13 +77,23 @@ router.get("/find/identifyId/:identifyId", auth.isAdmin, (req, res) => {
 
 
 router.patch("/", auth.isSignIn, (req, res) => {
-    ModelUser.findByIdAndUpdate({_id: req.decoded.id}, {$set: req.body})
-    .exec()
-    .then((_) => res.json(response.success(_)))
-    .catch((_) => {
-        var error = convertException(_)
+    try {
+        ModelUser.findByIdAndUpdate({_id: req.decoded.id}, {$set: req.body})
+        .exec()
+        .then(async (_) => {
+            var result = await ModelUser.findById(req.decoded.id)
+            .populate('setting')
+            res.json(response.success(result));
+        })
+        .catch((_) => {
+            var error = convertException(_)
+            res.json(response.fail(error, error.errmsg, error.code))
+        });
+    
+    } catch {
+        var error = convertException(err)
         res.json(response.fail(error, error.errmsg, error.code))
-    });
+    }
 });
 
 

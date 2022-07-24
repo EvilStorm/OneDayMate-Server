@@ -1,0 +1,27 @@
+### 
+POST http://localhost:2394/api/tagCategory
+content-type: application/json
+identifyid: admin
+id: 1
+
+{
+    "category": "운동∙액티비티"
+}
+### 
+POST http://localhost:2394/api/tagCategory/dump/insert
+content-type: application/json
+identifyid: admin
+id: 1
+
+### 
+GET http://localhost:2394/api/tagCategory
+content-type: application/json
+identifyid: admin
+id: 1
+
+### 
+GET http://localhost:2394/api/tagCategory/search/운동∙액티비티
+content-type: application/json
+identifyid: admin
+id: 1
+
