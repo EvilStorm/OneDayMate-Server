@@ -64,7 +64,7 @@ app.use('/api/init', require('./routers/app_start'));
 app.use('/api/appVersion', require('./routers/app_version'));
 app.use('/api/notify', require('./routers/notify'));
 app.use('/api/term', require('./routers/term'));
-app.use('/api/tagCategory', require('./routers/tag_category'));
+app.use('/api/category', require('./routers/category'));
 app.use('/api/tag', require('./routers/tag'));
 app.use('/api/sign', require('./routers/sign'));
 app.use('/api/user', require('./routers/user'));

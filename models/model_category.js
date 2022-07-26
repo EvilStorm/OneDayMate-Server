@@ -11,4 +11,4 @@ const schema = new Schema({
     versionKey: false // You should be aware of the outcome after set to false
 });
 
-module.exports = mongoose.model('TagCategory', schema);
+module.exports = mongoose.model('Category', schema);

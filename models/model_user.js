@@ -12,7 +12,7 @@ const schema = new Schema({
     aboutMe: {type: String, default: "." },
     pushToken: {type: String, default: null},
     location: {type: String, default: null},
-    tagCategory: [{type: Schema.Types.ObjectId, ref: 'TagCategory', default:null}],
+    category: [{type: Schema.Types.ObjectId, ref: 'Category', default:null}],
     setting: {type: Schema.Types.ObjectId, ref: 'Setting', default:null},
     mateHistory: {type: Schema.Types.ObjectId, ref: 'MateMyHistory'},
     createdAt: {type: Date, default: Date.now}

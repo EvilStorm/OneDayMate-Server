@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
 
-var ModelTagCategory = require('../models/model_tag_category');
+var ModelCategory = require('../models/model_category');
 var auth = require('../components/auth');
 var response = require('../components/response/response_util');
 var {ResponseCode } = require('../components/response/response_code_store');
@@ -82,7 +82,7 @@ var category = [
 ]
 
 router.get("", (req, res) => {
-    ModelTagCategory.find()
+    ModelCategory.find()
     .exec()
     .then((_) => res.json(response.success(_)))
     .catch((_) => {
@@ -91,7 +91,7 @@ router.get("", (req, res) => {
     });
 });
 router.get("/search/:category", (req, res) => {
-    ModelTagCategory.find({category: req.params.category})
+    ModelCategory.find({category: req.params.category})
     .exec()
     .then((_) => res.json(response.success(_)))
     .catch((_) => {
@@ -101,7 +101,7 @@ router.get("/search/:category", (req, res) => {
 });
 
 router.post("/dump/insert", auth.isAdmin, (req, res) => {
-    // const model = new ModelTagCategory(req.body)
+    // const model = new ModelCategory(req.body)
     // model.save()
     // .then((_) => res.json(response.success(_)))
     // .catch((_) => {
@@ -109,7 +109,7 @@ router.post("/dump/insert", auth.isAdmin, (req, res) => {
     //     res.json(response.fail(error, error.errmsg, error.code))
     // });
 
-    ModelTagCategory.insertMany(category)
+    ModelCategory.insertMany(category)
     .then((_) => res.json(response.success(_)))
     .catch((_) => {
         var error = convertException(_)
@@ -119,7 +119,7 @@ router.post("/dump/insert", auth.isAdmin, (req, res) => {
 });
 
 router.post("/", auth.isAdmin, (req, res) => {
-    const model = new ModelTagCategory(req.body)
+    const model = new ModelCategory(req.body)
     model.save()
     .then((_) => res.json(response.success(_)))
     .catch((_) => {
