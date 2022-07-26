@@ -13,6 +13,7 @@ const schema = new Schema({
     memberLimit: {type: Number, default: 4},
     member: {type: Schema.Types.ObjectId, ref: 'MateMember'},
     mateDate: {type: Date, default: Date.now},
+    category: [{type: Schema.Types.ObjectId, ref: 'Category', index: true}],
     tags: [{type: Schema.Types.ObjectId, ref: 'Tag', index: true}],
     reply: [{type: Schema.Types.ObjectId, ref: 'Reply'}],
     isShow: {type:Boolean, default:true},
