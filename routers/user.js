@@ -77,6 +77,7 @@ router.get("/find/identifyId/:identifyId", auth.isAdmin, (req, res) => {
 
 
 router.patch("/", auth.isSignIn, (req, res) => {
+    console.log(` User Patch req.decoded.id: ${req.decoded.id}`)
     try {
         ModelUser.findByIdAndUpdate({_id: req.decoded.id}, {$set: req.body})
         .exec()
@@ -86,6 +87,7 @@ router.patch("/", auth.isSignIn, (req, res) => {
             res.json(response.success(result));
         })
         .catch((_) => {
+            console.log(_);
             var error = convertException(_)
             res.json(response.fail(error, error.errmsg, error.code))
         });
@@ -93,6 +95,7 @@ router.patch("/", auth.isSignIn, (req, res) => {
     } catch {
         var error = convertException(err)
         res.json(response.fail(error, error.errmsg, error.code))
+        console.log(e);
     }
 });
 

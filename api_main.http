@@ -1,0 +1,6 @@
+
+###
+GET http://localhost:2394/api/main
+content-type: application/json
+identifyId: test_member_two
+userId: 62c9ab3c48c0fddeb533ee1e

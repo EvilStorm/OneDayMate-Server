@@ -72,6 +72,7 @@ app.use('/api/setting', require('./routers/setting'));
 app.use('/api/mate', require('./routers/mate'));
 app.use('/api/auth', require('./routers/auth'));
 app.use('/api/briefAddr', require('./routers/brief_address'));
+app.use('/api/main', require('./routers/main'));
 
 app.use(exceptionHandler)
 
