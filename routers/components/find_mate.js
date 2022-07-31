@@ -29,7 +29,9 @@ const mateDetailPopulate = [
     path: 'owner',
     select: userBriefSelect,
   },
-
+  {
+    path: 'category',
+  },
   {
     path: 'tags',
   },

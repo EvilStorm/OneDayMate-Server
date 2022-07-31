@@ -14,7 +14,7 @@ var { getMateBerif, getMateBriefWithCondition } = require('./components/find_mat
 router.get('', auth.isSignIn, async (req, res) => {
   const user = await ModelUser.findById(req.decoded.id);
 
-  getMateBriefWithCondition(req.params.mateId, 0, 2)
+  getMateBriefWithCondition(req.params.mateId, 0, 10)
     .then((_) => res.json(response.success(_)))
     .catch((_) => {
       console.log(_);
