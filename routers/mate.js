@@ -194,6 +194,36 @@ router.post('/accept/cancel/:mateId', auth.isSignIn, async (req, res) => {
   }
 });
 
+router.patch('/like', auth.isSignIn, async (req, res) => {
+  try {
+    var mate = await ModelMate.findById(req.body.mateId);
+    var history = await ModelMateMyHistory.findOne({ owner: req.decoded.id });
+
+    var index = mate.like.indexOf(req.decoded.id);
+
+    var resultValue = false;
+
+    if (index == -1) {
+      mate.like.push(req.decoded.id);
+      history.liked.push(req.body.mateId);
+      resultValue = true;
+    } else {
+      mate.like.splice(index, 1);
+
+      const historyIndex = history.liked.indexOf(req.body.mateId);
+      history.liked.splice(historyIndex, 1);
+    }
+
+    await history.save();
+    await mate.save();
+    res.json(response.success({ result: 1, value: resultValue }));
+  } catch (e) {
+    console.log(e);
+    var error = convertException(e);
+    res.json(response.fail(error, error.errmsg, error.code));
+  }
+});
+
 router.get('/detail/:mateId', (req, res) => {
   getMateDetail(req.params.mateId)
     .then((_) => res.json(response.success(_)))
@@ -268,6 +298,7 @@ router.get('/search/tag/:tag', (req, res) => {
 });
 
 router.patch('/:_id', auth.isAdmin, (req, res) => {
+  console.log(' PATCH !!! 1111111');
   ModelMate.findByIdAndUpdate({ _id: req.params._id }, { $set: req.body })
     .exec()
     .then((_) => res.json(response.success(_)))

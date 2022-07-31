@@ -2,5 +2,5 @@
 ###
 GET http://localhost:2394/api/main
 content-type: application/json
-identifyId: test_member_two
-userId: 62c9ab3c48c0fddeb533ee1e
+identifyId: n7CeRMJFqIN01wXVEEuA7fKcxzt2
+userId: 62e14ef2b0e3c2136ef3e93d
