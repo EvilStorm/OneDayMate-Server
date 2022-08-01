@@ -142,7 +142,7 @@ async function getMateDetail(
         $limit: limitCount,
       },
     ]);
-    console.log(` mate: ${JSON.stringify(mate)}`);
+    // console.log(` mate: ${JSON.stringify(mate)}`);
     return mate;
   } catch (e) {
     console.log(e);
@@ -252,7 +252,7 @@ async function getMateBrief(
         $limit: limitCount,
       },
     ]);
-    console.log(` mate: ${JSON.stringify(mate)}`);
+    // console.log(` mate: ${JSON.stringify(mate)}`);
     return mate;
   } catch (e) {
     console.log(e);
