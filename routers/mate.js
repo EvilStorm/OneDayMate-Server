@@ -224,14 +224,17 @@ router.patch('/like', auth.isSignIn, async (req, res) => {
   }
 });
 
-router.get('/detail/:mateId', (req, res) => {
-  getMateDetail(req.params.mateId)
-    .then((_) => res.json(response.success(_)))
-    .catch((_) => {
-      console.log(_);
-      var error = convertException(_);
-      res.json(response.fail(error, error.errmsg, error.code));
+router.get('/detail/:mateId', auth.signCondition, async (req, res) => {
+  try {
+    var result = await MateAggr.getMateDetail(req.decoded.id, {
+      $and: [{ _id: mongoose.Types.ObjectId(req.params.mateId) }, { isShow: true }],
     });
+    res.json(response.success(result));
+  } catch (e) {
+    console.log(e);
+    var error = convertException(e);
+    res.json(response.fail(error, error.errmsg, error.code));
+  }
 });
 
 router.get('/brief/:mateId', (req, res) => {
