@@ -18,42 +18,41 @@ var MateAggr = require('./components/aggr_mate');
 
 var FCMCreator = require('../components/fcm/fcm_message_creator');
 var FCMSender = require('../components/fcm/fcm_sender');
+const { compareDocumentPosition } = require('domutils');
 
-router.post('', auth.isSignIn, (req, res) => {
+router.post('', auth.isSignIn, async (req, res) => {
   console.log(req.body);
 
-  var data = req.body;
-  const tags = [...req.body.tags];
+  try {
+    let data = req.body;
+    const tags = [...req.body.tags];
 
-  data.owner = req.decoded.id;
-  data.tags = [];
+    data.owner = req.decoded.id;
+    data.tags = [];
 
-  ModelMate(data)
-    .save()
-    .then(async (_) => {
-      var history = await ModelMateMyHistory.findOne({ owner: req.decoded.id });
-      history.created.unshift(_._id);
-      await history.save();
+    let mate = await ModelMate(data);
+    var history = await ModelMateMyHistory.findOne({ owner: req.decoded.id });
+    history.created.unshift(mate._id);
+    await history.save();
 
-      var mateJoin = await ModelMateMember({
-        owner: req.decoded.id,
-        mate: _.id,
-        appliedMember: [req.decoded.id],
-        acceptedMember: [req.decoded.id],
-        deniedMember: [],
-      }).save();
-      _.member = mateJoin._id;
-      await _.save();
+    var mateJoin = await ModelMateMember({
+      owner: req.decoded.id,
+      mate: mate.id,
+      appliedMember: [req.decoded.id],
+      acceptedMember: [req.decoded.id],
+      deniedMember: [],
+    }).save();
+    mate.member = mateJoin._id;
+    await mate.save();
 
-      await TagHandler.postTagsMate(_._id, _.owner, tags);
-      const resposeData = await getMateDetail(_._id);
+    await TagHandler.postTagsMate(mate._id, mate.owner, tags);
+    const resposeData = await getMateDetail(mate._id);
 
-      res.json(response.success(resposeData));
-    })
-    .catch((_) => {
-      var error = convertException(_);
-      res.json(response.fail(error, error.errmsg, error.code));
-    });
+    res.json(response.success(resposeData));
+  } catch (e) {
+    var error = convertException(_);
+    res.json(response.fail(error, error.errmsg, error.code));
+  }
 });
 
 /**
@@ -61,107 +60,104 @@ router.post('', auth.isSignIn, (req, res) => {
  */
 router.post('/apply/:mateId', auth.isSignIn, async (req, res) => {
   console.log(`req.decoded.id: ${req.decoded.id}`);
-  //맴버맵에 지원자 추가하기
-  var joinMate = await ModelMateMember.findOne({ mate: req.params.mateId });
-  joinMate.appliedMember.push(req.decoded.id);
-  joinMate
-    .save()
-    .then(async (_) => {
-      console.log(`ID: ${req.decoded.id}`);
-      //메이트에 지원원 원료시 내 메이트 히스토리에 지원으로 등록한다.
-      var history = await ModelMateMyHistory.findOne({ owner: mongoose.Types.ObjectId(req.decoded.id) });
-      history.applied.unshift(req.params.mateId);
-      await history.save();
+  try {
+    var joinMate = await ModelMateMember.findOne({ mate: req.params.mateId });
+    joinMate.appliedMember.push(req.decoded.id);
+    let mateResult = await joinMate.save();
 
-      //지원한 메이트 주인에게 지원자가 있다는 알림을 발송한다.
-      var owner = await ModelUser.findById(_.owner).populate('setting');
+    var history = await ModelMateMyHistory.findOne({ owner: mongoose.Types.ObjectId(req.decoded.id) });
+    history.applied.unshift(req.params.mateId);
+    await history.save();
 
-      if (owner.setting.mateJoinAlarm) {
-        var message = await FCMCreator.createMessage(_.owner, FCMCreator.MessageType.APPLIED);
-        FCMSender.sendPush(message);
-      }
+    //지원한 메이트 주인에게 지원자가 있다는 알림을 발송한다.
+    var owner = await ModelUser.findById(mateResult.owner).populate('setting');
 
-      res.json(response.success(_));
-    })
-    .catch((_) => {
-      var error = convertException(_);
-      res.json(response.fail(error, error.errmsg, error.code));
-    });
+    if (owner.setting.mateJoinAlarm) {
+      var message = await FCMCreator.createMessage(mateResult.owner, FCMCreator.MessageType.APPLIED);
+      FCMSender.sendPush(message);
+    }
+
+    const result = await getMateBerif(req.params.mateId);
+    res.json(response.success(result));
+  } catch (e) {
+    var error = convertException(e);
+    res.json(response.fail(error, error.errmsg, error.code));
+  }
 });
 
 /**
  * 참가 신청취소(참가 신청자가 취소)
  */
 router.post('/apply/cancel/:mateId', auth.isSignIn, async (req, res) => {
-  //신청자 히스토리에 등록한 지원을 삭제한다.
-  var history = await ModelMateMyHistory.findOne({ owner: req.decoded.id });
-  const historyIndex = history.applied.indexOf(req.params.mateId);
-  if (historyIndex > -1) {
-    history.applied.splice(historyIndex, 1);
+  try {
+    var history = await ModelMateMyHistory.findOne({ owner: req.decoded.id });
+    const historyIndex = history.applied.indexOf(req.params.mateId);
+    if (historyIndex > -1) {
+      history.applied.splice(historyIndex, 1);
+    }
+    await history.save();
+
+    //지원 한 메이트에 지원을 삭제한다.
+    var joinMate = await ModelMateMember.findOne({ mate: req.params.mateId });
+
+    const index = joinMate.appliedMember.indexOf(req.decoded.id);
+    if (index > -1) {
+      joinMate.appliedMember.splice(index, 1);
+    }
+
+    //이미 참가 승인이 난 경우
+    const accpetedIndex = joinMate.acceptedMember.indexOf(req.decoded.id);
+    if (accpetedIndex > -1) {
+      joinMate.acceptedMember.splice(accpetedIndex, 1);
+    }
+
+    //지원한 메이트 주인에게 지원자가 지원 취소했다는 알림을 발송한다.
+    var owner = await ModelUser.findById(joinMate.owner).populate('setting');
+
+    if (owner.setting.mateJoinAlarm) {
+      var message = await FCMCreator.createMessage(joinMate.owner, FCMCreator.MessageType.APPLY_CANCEL);
+      FCMSender.sendPush(message);
+    }
+
+    await joinMate.save();
+
+    const result = await getMateBerif(req.params.mateId);
+    res.json(response.success(result));
+  } catch (e) {
+    var error = convertException(_);
+    res.json(response.fail(error, error.errmsg, error.code));
   }
-  await history.save();
-
-  //지원 한 메이트에 지원을 삭제한다.
-  var joinMate = await ModelMateMember.findOne({ mate: req.params.mateId });
-
-  const index = joinMate.appliedMember.indexOf(req.decoded.id);
-  if (index > -1) {
-    joinMate.appliedMember.splice(index, 1);
-  }
-
-  //이미 참가 승인이 난 경우
-  const accpetedIndex = joinMate.acceptedMember.indexOf(req.decoded.id);
-  if (accpetedIndex > -1) {
-    joinMate.acceptedMember.splice(accpetedIndex, 1);
-  }
-
-  //지원한 메이트 주인에게 지원자가 지원 취소했다는 알림을 발송한다.
-  var owner = await ModelUser.findById(joinMate.owner).populate('setting');
-
-  if (owner.setting.mateJoinAlarm) {
-    var message = await FCMCreator.createMessage(joinMate.owner, FCMCreator.MessageType.APPLY_CANCEL);
-    FCMSender.sendPush(message);
-  }
-
-  joinMate
-    .save()
-    .then((_) => res.json(response.success(_)))
-    .catch((_) => {
-      var error = convertException(_);
-      res.json(response.fail(error, error.errmsg, error.code));
-    });
 });
 
 /**
  * 메이트 참가 허락
  */
 router.post('/accept/:mateId', auth.isSignIn, async (req, res) => {
-  const memberId = req.body.joinMemberId;
-  var joinMate = await ModelMateMember.findOne({ mate: req.params.mateId });
-  joinMate.acceptedMember.push(memberId);
+  try {
+    const memberId = req.body.joinMemberId;
+    var joinMate = await ModelMateMember.findOne({ mate: req.params.mateId });
+    joinMate.acceptedMember.push(memberId);
+    const insert = await joinMate.save();
 
-  joinMate
-    .save()
-    .then(async (_) => {
-      var history = await ModelMateMyHistory.findOne({ owner: memberId });
-      console.log(history);
-      history.accepted.unshift(req.params.mateId);
-      await history.save();
+    var history = await ModelMateMyHistory.findOne({ owner: memberId });
+    console.log(history);
+    history.accepted.unshift(req.params.mateId);
+    await history.save();
 
-      //지원한 메이트에게 승인되었다는 푸쉬를 보낸다.
-      var owner = await ModelUser.findById(memberId).populate('setting');
+    //지원한 메이트에게 승인되었다는 푸쉬를 보낸다.
+    var owner = await ModelUser.findById(memberId).populate('setting');
 
-      if (owner.setting.mateJoinAlarm) {
-        var message = await FCMCreator.createMessage(memberId, FCMCreator.MessageType.ACCEPT);
-        FCMSender.sendPush(message);
-      }
+    if (owner.setting.mateJoinAlarm) {
+      var message = await FCMCreator.createMessage(memberId, FCMCreator.MessageType.ACCEPT);
+      FCMSender.sendPush(message);
+    }
 
-      res.json(response.success(_));
-    })
-    .catch((_) => {
-      var error = convertException(_);
-      res.json(response.fail(error, error.errmsg, error.code));
-    });
+    const result = await getMateBerif(req.params.mateId);
+    res.json(response.success(result));
+  } catch (e) {
+    var error = convertException(_);
+    res.json(response.fail(error, error.errmsg, error.code));
+  }
 });
 
 /**
@@ -187,7 +183,8 @@ router.post('/accept/cancel/:mateId', auth.isSignIn, async (req, res) => {
       FCMSender.sendPush(message);
     }
 
-    res.json(response.success({ result: 1 }));
+    const result = await getMateBerif(req.params.mateId);
+    res.json(response.success(result));
   } catch (e) {
     var error = convertException(e);
     res.json(response.fail(error, error.errmsg, error.code));
@@ -216,7 +213,12 @@ router.patch('/like', auth.isSignIn, async (req, res) => {
 
     await history.save();
     await mate.save();
-    res.json(response.success({ result: 1, value: resultValue }));
+
+    const result = await MateAggr.getMateBrief(req.decoded.id, {
+      _id: mongoose.Types.ObjectId(req.body.mateId),
+    });
+    console.log(result);
+    res.json(response.success(result));
   } catch (e) {
     console.log(e);
     var error = convertException(e);
@@ -229,6 +231,8 @@ router.get('/detail/:mateId', auth.signCondition, async (req, res) => {
     var result = await MateAggr.getMateDetail(req.decoded.id, {
       $and: [{ _id: mongoose.Types.ObjectId(req.params.mateId) }, { isShow: true }],
     });
+
+    console.log(result);
     res.json(response.success(result));
   } catch (e) {
     console.log(e);
