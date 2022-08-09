@@ -76,9 +76,10 @@ router.post('/apply/:mateId', auth.isSignIn, async (req, res) => {
       var message = await FCMCreator.createMessage(mateResult.owner, FCMCreator.MessageType.APPLIED);
       FCMSender.sendPush(message);
     }
-
-    const result = await getMateBerif(req.params.mateId);
+    const result = await getBriefSigleMateByMateId(req.decoded.id, req.params.mateId);
     res.json(response.success(result));
+    // const result = await getMateBerif(req.params.mateId);
+    // res.json(response.success(result));
   } catch (e) {
     var error = convertException(e);
     res.json(response.fail(error, error.errmsg, error.code));
@@ -121,9 +122,12 @@ router.post('/apply/cancel/:mateId', auth.isSignIn, async (req, res) => {
 
     await joinMate.save();
 
-    const result = await getMateBerif(req.params.mateId);
+    // const result = await getMateBerif(req.params.mateId);
+    // res.json(response.success(result));
+    const result = await getBriefSigleMateByMateId(req.decoded.id, req.params.mateId);
     res.json(response.success(result));
   } catch (e) {
+    console.log(e);
     var error = convertException(_);
     res.json(response.fail(error, error.errmsg, error.code));
   }
@@ -140,7 +144,7 @@ router.post('/accept/:mateId', auth.isSignIn, async (req, res) => {
     const insert = await joinMate.save();
 
     var history = await ModelMateMyHistory.findOne({ owner: memberId });
-    console.log(history);
+    // console.log(history);
     history.accepted.unshift(req.params.mateId);
     await history.save();
 
@@ -152,8 +156,11 @@ router.post('/accept/:mateId', auth.isSignIn, async (req, res) => {
       FCMSender.sendPush(message);
     }
 
-    const result = await getMateBerif(req.params.mateId);
+    const result = await getBriefSigleMateByMateId(req.decoded.id, req.params.mateId);
     res.json(response.success(result));
+
+    // const result = await getMateBerif(req.params.mateId);
+    // res.json(response.success(result));
   } catch (e) {
     var error = convertException(_);
     res.json(response.fail(error, error.errmsg, error.code));
@@ -183,8 +190,11 @@ router.post('/accept/cancel/:mateId', auth.isSignIn, async (req, res) => {
       FCMSender.sendPush(message);
     }
 
-    const result = await getMateBerif(req.params.mateId);
+    const result = await getBriefSigleMateByMateId(req.decoded.id, req.params.mateId);
     res.json(response.success(result));
+
+    // const result = await getMateBerif(req.params.mateId);
+    // res.json(response.success(result));
   } catch (e) {
     var error = convertException(e);
     res.json(response.fail(error, error.errmsg, error.code));
@@ -214,10 +224,7 @@ router.patch('/like', auth.isSignIn, async (req, res) => {
     await history.save();
     await mate.save();
 
-    const result = await MateAggr.getMateBrief(req.decoded.id, {
-      _id: mongoose.Types.ObjectId(req.body.mateId),
-    });
-    console.log(result);
+    const result = await getBriefSigleMateByMateId(req.decoded.id, req.body.mateId);
     res.json(response.success(result));
   } catch (e) {
     console.log(e);
@@ -232,7 +239,7 @@ router.get('/detail/:mateId', auth.signCondition, async (req, res) => {
       $and: [{ _id: mongoose.Types.ObjectId(req.params.mateId) }, { isShow: true }],
     });
 
-    console.log(result);
+    // console.log(result);
     res.json(response.success(result));
   } catch (e) {
     console.log(e);
@@ -241,14 +248,33 @@ router.get('/detail/:mateId', auth.signCondition, async (req, res) => {
   }
 });
 
-router.get('/brief/:mateId', (req, res) => {
-  getMateBerif(req.params.mateId)
-    .then((_) => res.json(response.success(_)))
-    .catch((_) => {
-      console.log(_);
-      var error = convertException(_);
-      res.json(response.fail(error, error.errmsg, error.code));
-    });
+async function getBriefSigleMateByMateId(userId, mateId) {
+  return new Promise((resolve, reject) => {
+    MateAggr.getMateBrief(userId, {
+      _id: mongoose.Types.ObjectId(mateId),
+    })
+      .then((_) => resolve(_[0]))
+      .catch((_) => {
+        reject(_);
+      });
+  });
+}
+router.get('/brief/:mateId', auth.signCondition, async (req, res) => {
+  try {
+    const result = await getBriefSigleMateByMateId(req.decoded.id, req.params.mateId);
+    res.json(response.success(result));
+  } catch (e) {
+    var error = convertException(_);
+    res.json(response.fail(error, error.errmsg, error.code));
+  }
+
+  // getMateBerif(req.params.mateId)
+  //   .then((_) => res.json(response.success(_)))
+  //   .catch((_) => {
+  //     console.log(_);
+  //     var error = convertException(_);
+  //     res.json(response.fail(error, error.errmsg, error.code));
+  //   });
 });
 
 router.get('/latest/:count', auth.signCondition, (req, res) => {
@@ -304,15 +330,24 @@ router.get('/search/tag/:tag', (req, res) => {
     });
 });
 
-router.patch('/:_id', auth.isAdmin, (req, res) => {
-  console.log(' PATCH !!! 1111111');
-  ModelMate.findByIdAndUpdate({ _id: req.params._id }, { $set: req.body })
-    .exec()
-    .then((_) => res.json(response.success(_)))
-    .catch((_) => {
-      var error = convertException(_);
-      res.json(response.fail(error, error.errmsg, error.code));
-    });
+router.patch('/:_id', auth.isSignIn, async (req, res) => {
+  try {
+    await ModelMate.findByIdAndUpdate({ _id: req.params._id }, { $set: req.body });
+
+    const result = await getBriefSigleMateByMateId(req.decoded.id, req.params._id);
+    res.json(response.success(result));
+  } catch (e) {
+    var error = convertException(_);
+    res.json(response.fail(error, error.errmsg, error.code));
+  }
+  // console.log(' PATCH !!! 1111111');
+  // ModelMate.findByIdAndUpdate({ _id: req.params._id }, { $set: req.body })
+  //   .exec()
+  //   .then((_) => res.json(response.success(_)))
+  //   .catch((_) => {
+  //     var error = convertException(_);
+  //     res.json(response.fail(error, error.errmsg, error.code));
+  //   });
 });
 
 router.delete('/:_id', auth.isAdmin, (req, res) => {

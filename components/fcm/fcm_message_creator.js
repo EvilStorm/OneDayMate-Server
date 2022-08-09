@@ -69,7 +69,7 @@ async function createActionsMessage(targetId, type) {
     token: fcmToken,
   };
 
-  console.log(pushInfos);
+  // console.log(pushInfos);
   return pushInfos;
 }
 
