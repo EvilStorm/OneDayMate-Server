@@ -25,6 +25,13 @@ userId: 62c9ab3c48c0fddeb533ee1e
 }
 
 ###
+GET http://localhost:2394/api/mate/me/created/0
+content-type: application/json
+identifyId: n7CeRMJFqIN01wXVEEuA7fKcxzt2
+userId: 62e14ef2b0e3c2136ef3e93d
+
+
+###
 GET http://localhost:2394/api/mate/detail/62e542887681f62c2c35872e
 content-type: application/json
 identifyId: n7CeRMJFqIN01wXVEEuA7fKcxzt2

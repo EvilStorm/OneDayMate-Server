@@ -138,11 +138,13 @@ router.post('/apply/cancel/:mateId', auth.isSignIn, async (req, res) => {
  */
 router.post('/accept/:mateId', auth.isSignIn, async (req, res) => {
   try {
-    const memberId = req.body.joinMemberId;
+    //ModelMateMember: 메이트에 신청한 맴버리스트
+    const memberId = req.body.userId;
     var joinMate = await ModelMateMember.findOne({ mate: req.params.mateId });
     joinMate.acceptedMember.push(memberId);
     const insert = await joinMate.save();
 
+    //ModelMateMyHistory: 내가 그동안 메이트에 신청, 승인 등의 기록
     var history = await ModelMateMyHistory.findOne({ owner: memberId });
     // console.log(history);
     history.accepted.unshift(req.params.mateId);
@@ -162,7 +164,7 @@ router.post('/accept/:mateId', auth.isSignIn, async (req, res) => {
     // const result = await getMateBerif(req.params.mateId);
     // res.json(response.success(result));
   } catch (e) {
-    var error = convertException(_);
+    var error = convertException(e);
     res.json(response.fail(error, error.errmsg, error.code));
   }
 });
@@ -259,6 +261,21 @@ async function getBriefSigleMateByMateId(userId, mateId) {
       });
   });
 }
+
+async function getBriefSigleMateByMateIdList(userId, mateIds) {
+  return new Promise((resolve, reject) => {
+    MateAggr.getMateBrief(userId, {
+      _id: {
+        $in: mateIds,
+      },
+    })
+      .then((_) => resolve(_))
+      .catch((_) => {
+        reject(_);
+      });
+  });
+}
+
 router.get('/brief/:mateId', auth.signCondition, async (req, res) => {
   try {
     const result = await getBriefSigleMateByMateId(req.decoded.id, req.params.mateId);
@@ -294,6 +311,78 @@ router.get('/latest/:count', auth.signCondition, (req, res) => {
       var error = convertException(_);
       res.json(response.fail(error, error.errmsg, error.code));
     });
+});
+
+router.get('/me/created/:page', auth.isSignIn, async (req, res) => {
+  try {
+    const page = Number(req.params.page);
+
+    const myHistory = await ModelMateMyHistory.findOne({
+      owner: req.decoded.id,
+    }).exec();
+
+    const list = myHistory.created.slice(DBConst.PAGE_COUNT * page, DBConst.PAGE_COUNT * (page + 1));
+
+    const result = await getBriefSigleMateByMateIdList(req.decoded.id, list);
+    res.json(response.success(result));
+  } catch (e) {
+    var error = convertException(_);
+    res.json(response.fail(error, error.errmsg, error.code));
+  }
+});
+
+router.get('/me/liked/:page', auth.isSignIn, async (req, res) => {
+  try {
+    const page = Number(req.params.page);
+
+    const myHistory = await ModelMateMyHistory.findOne({
+      owner: req.decoded.id,
+    }).exec();
+
+    const list = myHistory.liked.slice(DBConst.PAGE_COUNT * page, DBConst.PAGE_COUNT * (page + 1));
+
+    const result = await getBriefSigleMateByMateIdList(req.decoded.id, list);
+    res.json(response.success(result));
+  } catch (e) {
+    var error = convertException(_);
+    res.json(response.fail(error, error.errmsg, error.code));
+  }
+});
+
+router.get('/me/applied/:page', auth.isSignIn, async (req, res) => {
+  try {
+    const page = Number(req.params.page);
+
+    const myHistory = await ModelMateMyHistory.findOne({
+      owner: req.decoded.id,
+    }).exec();
+
+    const list = myHistory.applied.slice(DBConst.PAGE_COUNT * page, DBConst.PAGE_COUNT * (page + 1));
+
+    const result = await getBriefSigleMateByMateIdList(req.decoded.id, list);
+    res.json(response.success(result));
+  } catch (e) {
+    var error = convertException(_);
+    res.json(response.fail(error, error.errmsg, error.code));
+  }
+});
+
+router.get('/me/accepted/:page', auth.isSignIn, async (req, res) => {
+  try {
+    const page = Number(req.params.page);
+
+    const myHistory = await ModelMateMyHistory.findOne({
+      owner: req.decoded.id,
+    }).exec();
+
+    const list = myHistory.accepted.slice(DBConst.PAGE_COUNT * page, DBConst.PAGE_COUNT * (page + 1));
+
+    const result = await getBriefSigleMateByMateIdList(req.decoded.id, list);
+    res.json(response.success(result));
+  } catch (e) {
+    var error = convertException(_);
+    res.json(response.fail(error, error.errmsg, error.code));
+  }
 });
 
 router.get('/search/tag/:tag/:page', auth.signCondition, (req, res) => {
